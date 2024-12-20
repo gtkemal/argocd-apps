@@ -1,17 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: app-of-apps
+  name: nginx
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/gtkemal/argocd-apps.git
     targetRevision: HEAD
-    path: ./applications
+    path: ./helms/nginx
+    helm:
+      values: |
+        replicaCount: 2
+        service:
+          type: ClusterIP
+          port: 80
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: nginx
   syncPolicy:
     automated:
       prune: true
