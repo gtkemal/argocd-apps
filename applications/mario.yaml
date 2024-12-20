@@ -17,7 +17,7 @@ spec:
           nodePort: 8600
   destination:
     server: https://kubernetes.default.svc
-    namespace: mario
+    namespace: default
   syncPolicy:
     automated:
       prune: true
