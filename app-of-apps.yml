@@ -1,18 +1,31 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
-  name: app-of-apps
+  name: example-applicationset
   namespace: argocd
 spec:
-  project: default
-  source:
-    repoURL: https://github.com/gtkemal/argocd-apps.git
-    targetRevision: HEAD
-    path: ./applications
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: argocd
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+  generators:
+    - list:
+        elements:
+          - name: nginx
+            path: ./helms/nginx
+            namespace: nginx
+          - name: mario
+            path: ./helms/mario
+            namespace: mario
+  template:
+    metadata:
+      name: '{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/gtkemal/argocd-apps.git
+        targetRevision: HEAD
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
