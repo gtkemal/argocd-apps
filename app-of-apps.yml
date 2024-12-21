@@ -1,30 +1,29 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: example-applicationset
+  name: nginx-mario-applicationset
   namespace: argocd
 spec:
   generators:
-    - list:
-        elements:
-          - name: nginx
-            path: ./helms/nginx
-            namespace: nginx
-          - name: mario
-            path: ./helms/mario
-            namespace: mario
+    - git:
+        repoURL: https://github.com/gtkemal/argocd-apps.git
+        revision: HEAD
+        directories:
+          # Generate an application for each subdirectory under helms/
+          - path: helms/*
   template:
     metadata:
-      name: '{{name}}'
+      namespace: argocd
+      name: '{{path.basename}}-app'  # Use the directory name (nginx/mario) as the application name
     spec:
       project: default
       source:
         repoURL: https://github.com/gtkemal/argocd-apps.git
         targetRevision: HEAD
-        path: '{{path}}'
+        path: '{{path}}'  # Path to the Helm chart in the repository
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{namespace}}'
+        namespace: '{{path.basename}}'  # Deploy to the namespace matching the chart name
       syncPolicy:
         automated:
           prune: true
