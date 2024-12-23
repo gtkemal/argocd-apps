@@ -5,34 +5,43 @@ metadata:
   namespace: argocd
 spec:
   generators:
-    - git:
-        repoURL: https://github.com/gtkemal/argocd-apps.git
-        revision: HEAD
-        directories:
-          # Generate an application for each app (nginx, mario) and environment
-          - path: helms/*
+    - list:
+        elements:
+          # NGINX
+          - name: nginx-dev
+            app: nginx
+            env: dev
+            values: helms/nginx/dev-values.yaml
+          - name: nginx-qa
+            app: nginx
+            env: qa
+            values: helms/nginx/qa-values.yaml
+          # MARIO
+          - name: mario-dev
+            app: mario
+            env: dev
+            values: helms/mario/dev-values.yaml
+          - name: mario-qa
+            app: mario
+            env: qa
+            values: helms/mario/qa-values.yaml
   template:
     metadata:
       namespace: argocd
-      name: '{{path.basename}}-{{env}}'  # Application name (e.g., nginx-dev, mario-qa)
+      name: '{{name}}'  # Application name: e.g., nginx-dev, mario-qa
     spec:
       project: default
       source:
-        repoURL: https://github.com/gtkemal/argocd-apps.git
+        repoURL: https://github.com/your-org/your-repo.git
         targetRevision: HEAD
-        path: '{{path}}'  # Path to the Helm chart in the repository
+        path: helms/{{app}}  # Path to the Helm chart
         helm:
           valueFiles:
-            # Reference environment-specific values.yaml
-            - 'helms/{{path.basename}}/{{env}}-values.yaml'
+            - '{{values}}'  # Use environment-specific values.yaml
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{env}}'  # Namespace corresponds to the environment (dev, qa, staging)
+        namespace: '{{env}}'  # Deploy to the environment namespace (e.g., dev, qa)
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
-  # Define environments (dev, qa, staging) as parameters
-  params:
-    - name: env
-      values: [dev, qa, staging]
