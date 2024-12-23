@@ -24,7 +24,7 @@ spec:
         helm:
           valueFiles:
             # Correct reference to dev-values.yaml
-            - '{{path}}/dev-values.yaml'
+            - './dev-values.yaml'
       destination:
         server: https://kubernetes.default.svc
         namespace: dev  # Deploy to the dev namespace
