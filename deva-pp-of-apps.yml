@@ -14,7 +14,7 @@ spec:
   template:
     metadata:
       namespace: argocd
-      name: '{{path.basename}}-app'  # Use the directory name (nginx/mario) as the application name
+      name: '{{path.basename}}-dev'  # Application name: e.g., nginx-dev, mario-dev
     spec:
       project: default
       source:
@@ -23,7 +23,8 @@ spec:
         path: '{{path}}'  # Path to the Helm chart in the repository
         helm:
           valueFiles:
-            - 'helms/{{path.basename}}/dev-values.yaml'  # Dynamically reference dev-values.yaml
+            # Correct reference to dev-values.yaml
+            - '{{path}}/dev-values.yaml'
       destination:
         server: https://kubernetes.default.svc
         namespace: dev  # Deploy to the dev namespace
