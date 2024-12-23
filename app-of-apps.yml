@@ -1,34 +1,46 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: dev-nginx-mario-applicationset
+  name: nginx-mario-applicationset
   namespace: argocd
 spec:
   generators:
     - list:
         elements:
+          # NGINX
           - name: nginx-dev
             app: nginx
+            env: dev
             values: helms/nginx/dev-values.yaml
+          - name: nginx-qa
+            app: nginx
+            env: qa
+            values: helms/nginx/qa-values.yaml
+          # MARIO
           - name: mario-dev
             app: mario
+            env: dev
             values: helms/mario/dev-values.yaml
+          - name: mario-qa
+            app: mario
+            env: qa
+            values: helms/mario/qa-values.yaml
   template:
     metadata:
       namespace: argocd
-      name: '{{name}}'
+      name: '{{name}}'  # Application name: e.g., nginx-dev, mario-qa
     spec:
       project: default
       source:
-        repoURL: https://github.com/your-org/your-repo.git
+        repoURL: https://github.com/gtkemal/argocd-apps.git
         targetRevision: HEAD
-        path: helms/{{app}}
+        path: helms/{{app}}  # Path to the Helm chart
         helm:
           valueFiles:
-            - '{{values}}'
+            - '{{values}}'  # Use environment-specific values.yaml
       destination:
         server: https://kubernetes.default.svc
-        namespace: dev
+        namespace: '{{env}}'  # Deploy to the environment namespace (e.g., dev, qa)
       syncPolicy:
         automated:
           prune: true
