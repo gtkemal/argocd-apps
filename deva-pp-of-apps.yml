@@ -21,9 +21,12 @@ spec:
         repoURL: https://github.com/gtkemal/argocd-apps.git
         targetRevision: HEAD
         path: '{{path}}'  # Path to the Helm chart in the repository
+        helm:
+          valueFiles:
+            - 'helms/{{path.basename}}/dev-values.yaml'  # Dynamically reference dev-values.yaml
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{path.basename}}'  # Deploy to the namespace matching the chart name
+        namespace: dev  # Deploy to the dev namespace
       syncPolicy:
         automated:
           prune: true
