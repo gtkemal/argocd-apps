@@ -11,10 +11,11 @@ spec:
         directories:
           # Generate an application for each app (nginx, mario)
           - path: helms/*
-        params:
-          # Define the environments to be applied
-          - name: env
-            values: [dev, qa, staging]
+    - list:
+        elements:
+          - env: dev
+          - env: qa
+          - env: staging
   template:
     metadata:
       namespace: argocd
@@ -24,7 +25,7 @@ spec:
       source:
         repoURL: https://github.com/gtkemal/argocd-apps.git
         targetRevision: HEAD
-        path: '{{path}}'  # Path to the Helm chart in the repository
+        path: '{{path}}'  # Path to the Helm chart
         helm:
           valueFiles:
             # Reference environment-specific values.yaml
