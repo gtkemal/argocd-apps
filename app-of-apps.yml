@@ -9,22 +9,30 @@ spec:
         repoURL: https://github.com/gtkemal/argocd-apps.git
         revision: HEAD
         directories:
-          # Generate an application for each subdirectory under helms/
+          # Generate an application for each app (nginx, mario) and environment
           - path: helms/*
   template:
     metadata:
       namespace: argocd
-      name: '{{path.basename}}-app'  # Use the directory name (nginx/mario) as the application name
+      name: '{{path.basename}}-{{env}}'  # Application name (e.g., nginx-dev, mario-qa)
     spec:
       project: default
       source:
         repoURL: https://github.com/gtkemal/argocd-apps.git
         targetRevision: HEAD
         path: '{{path}}'  # Path to the Helm chart in the repository
+        helm:
+          valueFiles:
+            # Reference environment-specific values.yaml
+            - 'helms/{{path.basename}}/{{env}}-values.yaml'
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{path.basename}}'  # Deploy to the namespace matching the chart name
+        namespace: '{{env}}'  # Namespace corresponds to the environment (dev, qa, staging)
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
+  # Define environments (dev, qa, staging) as parameters
+  params:
+    - name: env
+      values: [dev, qa, staging]
