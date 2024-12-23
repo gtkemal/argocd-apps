@@ -65,7 +65,7 @@ resources:
   limits:
     memory: "2048Mi"
     cpu: "1000m"
-
+environment: staging
 
 autoscaling:
   enabled: false

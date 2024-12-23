@@ -1,45 +1,38 @@
-apiVersion: argoproj.io/v1alpha1
+=apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: nginx-mario-applicationset
   namespace: argocd
 spec:
   generators:
-    - list:
-        elements:
-          - name: nginx-dev
-            app: nginx
-            env: dev
-            values: helms/nginx/dev-values.yaml
-          - name: mario-dev
-            app: mario
-            env: dev
-            values: helms/mario/dev-values.yaml
-          - name: nginx-qa
-            app: nginx
-            env: qa
-            values: helms/nginx/qa-values.yaml
-          - name: mario-qa
-            app: mario
-            env: qa
-            values: helms/mario/qa-values.yaml
+    - git:
+        repoURL: https://github.com/gtkemal/argocd-apps.git
+        revision: HEAD
+        directories:
+          # Generate an application for each app (nginx, mario) and environment
+          - path: helms/*
   template:
     metadata:
       namespace: argocd
-      name: '{{name}}'
+      name: '{{path.basename}}-{{env}}'  # Application name (e.g., nginx-dev, mario-qa)
     spec:
       project: default
       source:
         repoURL: https://github.com/gtkemal/argocd-apps.git
         targetRevision: HEAD
-        path: helms/{{app}}
+        path: '{{path}}'  # Path to the Helm chart in the repository
         helm:
           valueFiles:
-            - '{{values}}'
+            # Reference environment-specific values.yaml
+            - 'helms/{{path.basename}}/{{env}}-values.yaml'
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{env}}'
+        namespace: '{{env}}'  # Namespace corresponds to the environment (dev, qa, staging)
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
+  # Define environments (dev, qa, staging) as parameters
+  params:
+    - name: env
+      values: [dev, qa, staging]
