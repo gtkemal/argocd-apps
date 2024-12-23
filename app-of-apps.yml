@@ -1,4 +1,4 @@
-=apiVersion: argoproj.io/v1alpha1
+apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: nginx-mario-applicationset
@@ -9,8 +9,12 @@ spec:
         repoURL: https://github.com/gtkemal/argocd-apps.git
         revision: HEAD
         directories:
-          # Generate an application for each app (nginx, mario) and environment
+          # Generate an application for each app (nginx, mario)
           - path: helms/*
+        params:
+          # Define the environments to be applied
+          - name: env
+            values: [dev, qa, staging]
   template:
     metadata:
       namespace: argocd
@@ -32,7 +36,3 @@ spec:
         automated:
           prune: true
           selfHeal: true
-  # Define environments (dev, qa, staging) as parameters
-  params:
-    - name: env
-      values: [dev, qa, staging]
