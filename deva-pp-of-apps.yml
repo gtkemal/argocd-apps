@@ -9,7 +9,7 @@ spec:
         repoURL: https://github.com/gtkemal/argocd-apps.git
         revision: HEAD
         directories:
-          - path: helms/*  # Matches all subdirectories like helms/nginx, helms/mario
+          - path: helms/*  # Matches subdirectories like helms/nginx, helms/mario
   template:
     metadata:
       namespace: argocd
@@ -19,10 +19,10 @@ spec:
       source:
         repoURL: https://github.com/gtkemal/argocd-apps.git
         targetRevision: HEAD
-        path: '{{path}}'  # Path dynamically resolves to subdirectories like helms/nginx
+        path: '{{path}}'  # Dynamically resolves to subdirectories like helms/nginx
         helm:
           valueFiles:
-            - 'helms/{{path.basename}}/dev-values.yaml'  # Use dev-specific values.yaml
+            - 'helms/{{path.basename}}/dev-values.yaml'  # Reference dev-specific values.yaml
       destination:
         server: https://kubernetes.default.svc
         namespace: dev
