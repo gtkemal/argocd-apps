@@ -5,21 +5,21 @@ metadata:
   namespace: argocd
 spec:
   generators:
+    - list:
+        elements:
+          # Define the environments
+          - env: dev
+          - env: qa
+          - env: staging
     - git:
         repoURL: https://github.com/gtkemal/argocd-apps.git
         revision: HEAD
         directories:
-          # Generate an application for each app (nginx, mario)
           - path: helms/*
-    - list:
-        elements:
-          - env: dev
-          - env: qa
-          - env: staging
   template:
     metadata:
       namespace: argocd
-      name: '{{path.basename}}-{{env}}'  # Application name (e.g., nginx-dev, mario-qa)
+      name: '{{path.basename}}-{{env}}'  # Valid application name: e.g., mario-dev
     spec:
       project: default
       source:
@@ -28,11 +28,10 @@ spec:
         path: '{{path}}'  # Path to the Helm chart
         helm:
           valueFiles:
-            # Reference environment-specific values.yaml
             - 'helms/{{path.basename}}/{{env}}-values.yaml'
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{env}}'  # Namespace corresponds to the environment (dev, qa, staging)
+        namespace: '{{env}}'  # Namespace corresponds to the environment
       syncPolicy:
         automated:
           prune: true
