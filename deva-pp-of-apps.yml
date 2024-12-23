@@ -19,7 +19,7 @@ spec:
       source:
         repoURL: https://github.com/gtkemal/argocd-apps.git
         targetRevision: HEAD
-        path: '{{path}}'  # Dynamically resolves to subdirectories like helms/nginx
+        path: 'helms/{{path.basename}}/dev-values.yaml'  # Dynamically resolves to subdirectories like helms/nginx
         helm:
           valueFiles:
             - 'helms/{{path.basename}}/dev-values.yaml'  # Reference dev-specific values.yaml
