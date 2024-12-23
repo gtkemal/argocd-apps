@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: nginx-mario-applicationset
+  name: dev-nginx-mario-applicationset
   namespace: argocd
 spec:
   generators:
