@@ -7,7 +7,6 @@ spec:
   generators:
     - list:
         elements:
-          # Dev environment (linked to dev-argocd)
           - name: nginx-dev
             app: nginx
             env: dev
@@ -16,7 +15,6 @@ spec:
             app: mario
             env: dev
             values: helms/mario/dev-values.yaml
-          # QA environment (linked to qa-argocd)
           - name: nginx-qa
             app: nginx
             env: qa
@@ -28,19 +26,19 @@ spec:
   template:
     metadata:
       namespace: argocd
-      name: '{{name}}'  # Application name (e.g., nginx-dev, mario-qa)
+      name: '{{name}}'
     spec:
       project: default
       source:
         repoURL: https://github.com/gtkemal/argocd-apps.git
         targetRevision: HEAD
-        path: helms/{{app}}  # Path to the Helm chart
+        path: helms/{{app}}
         helm:
           valueFiles:
-            - '{{values}}'  # Dynamically reference the external values file
+            - '{{values}}'
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{env}}'  # Deploy to the environment namespace (e.g., dev, qa)
+        namespace: '{{env}}'
       syncPolicy:
         automated:
           prune: true
