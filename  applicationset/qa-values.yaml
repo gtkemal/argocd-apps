@@ -1,0 +1,23 @@
+spec:
+  valueFile: dev-values.yaml
+  env: qa
+  project: qa
+  namespace: qa
+  repoURL: https://github.com/gtkemal/argocd-apps.git
+  source:
+    targetRevision: HEAD
+  elements:
+    - cluster: cluster
+      url: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false
+
+services:
+  nginx:
+    enabled: true
+    path: "helms/nginx"
+  mario:
+    enabled: true
+    path: "helms/mario"
