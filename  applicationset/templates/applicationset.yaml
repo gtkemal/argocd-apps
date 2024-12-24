@@ -1,31 +1,28 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: "{{ .Values.env }}-services-applicationset"
+  name: dev-services-applicationset
   namespace: argocd
 spec:
   generators:
     - list:
         elements:
-          {{- range .Values.services }}
-          {{- if .enabled }}
-          - name: "{{ .name }}"
-          {{- end }}
-          {{- end }}
+          - name: nginx
+            env: dev
   template:
     metadata:
-      name: '{{name}}-{{ $.Values.env }}'
+      name: nginx-dev
     spec:
       project: default
       source:
-        repoURL: "{{ .Values.repoURL }}"
+        repoURL: https://github.com/your-org/argocd-apps.git
         targetRevision: HEAD
-        path: helms/{{name}}
+        path: helms/nginx
         helm:
           valueFiles:
-            - 'helms/{{name}}/{{ $.Values.env }}-values.yaml'
+            - helms/nginx/dev-values.yaml
       destination:
-        namespace: "{{ .Values.env }}"
+        namespace: dev
         server: https://kubernetes.default.svc
       syncPolicy:
         automated:
