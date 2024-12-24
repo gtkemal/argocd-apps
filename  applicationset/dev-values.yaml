@@ -1,14 +1,18 @@
-envName: dev
 spec:
-  source:
-    targetRevision: HEAD  # Define targetRevision here
-  repoURL: https://github.com/gtkemal/argocd-apps.git
-  namespace: dev
+  valueFile: dev-values.yaml
+  env: dev
   project: default
-  valueFile: "values.yaml"
+  namespace: default
+  repoURL: https://github.com/gtkemal/argocd-apps.git
+  source:
+    targetRevision: HEAD
   elements:
     - cluster: cluster
       url: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false
 
 services:
   nginx:
