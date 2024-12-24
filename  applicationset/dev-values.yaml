@@ -1,0 +1,7 @@
+env: dev
+repoURL: https://github.com/gtkemal/argocd-apps.git
+services:
+  - name: nginx
+    enabled: true
+  - name: mario
+    enabled: false

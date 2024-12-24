@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ .Values.env }}-services-applicationset
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          {{- range .Values.services }}
+          - name: {{ .name }}
+            enabled: {{ .enabled }}
+          {{- end }}
+  template:
+    metadata:
+      name: '{{name}}-{{ $.Values.env }}'
+    spec:
+      project: default
+      source:
+        repoURL: {{ .Values.repoURL }}
+        targetRevision: HEAD
+        path: helms/{{name}}
+        helm:
+          valueFiles:
+            - 'helms/{{name}}/{{ $.Values.env }}-values.yaml'
+      destination:
+        namespace: {{ .Values.env }}
+        server: https://kubernetes.default.svc
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
