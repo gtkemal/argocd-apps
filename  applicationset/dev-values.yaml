@@ -1,7 +1,24 @@
-env: dev
-repoURL: https://github.com/gtkemal/argocd-apps.git
+envName: dev
+spec:
+  env: dev
+  namespace: dev
+  project: default
+  repoURL: https://github.com/gtkemal/argocd-apps.git
+  targetRevision: HEAD
+  valueFile: "values.yaml"
+  elements:
+    - cluster: cluster1
+      url: https://kubernetes.cluster1.local
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
 services:
-  - name: nginx
+  nginx:
     enabled: true
-  - name: mario
-    enabled: false
+    path: "helms/nginx"
+  mario:
+    enabled: true
+    path: "helms/mario"
+
