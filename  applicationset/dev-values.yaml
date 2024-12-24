@@ -8,7 +8,7 @@ spec:
   valueFile: "values.yaml"
   elements:
     - cluster: cluster
-      url:https://kubernetes.default.svc
+      url: https://kubernetes.default.svc
 
 services:
   nginx:
