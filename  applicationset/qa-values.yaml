@@ -1,5 +1,5 @@
 spec:
-  valueFile: dev-values.yaml
+  valueFile: qa-values.yaml
   env: qa
   project: qa
   namespace: qa
